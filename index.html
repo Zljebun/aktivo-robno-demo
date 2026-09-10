@@ -44,6 +44,8 @@
   .btn.ghost{background:transparent}
   .btn.sm{padding:5px 10px;font-size:13px}
   .btn.danger{color:var(--late);border-color:#f0c9c9}
+  td.rowacts{text-align:right;white-space:nowrap}
+  td.rowacts .btn{padding:4px 9px;margin-left:5px}
   .btn:disabled{opacity:.45;cursor:not-allowed}
 
   /* Cards / stats */
@@ -130,6 +132,7 @@
   <div class="tab"        id="tab-artikli" onclick="setView('artikli')">Artikli</div>
   <div class="tab"        id="tab-ulaz"    onclick="setView('ulaz')">Ulaz robe</div>
   <div class="tab"        id="tab-izlaz"   onclick="setView('izlaz')">Izlaz robe</div>
+  <div class="tab"        id="tab-partneri" onclick="setView('partneri')">Partneri</div>
   <div class="tab"        id="tab-izvjestaji" onclick="setView('izvjestaji')">Izvještaji</div>
   <div class="demo-flag">DEMO — podaci su izmišljeni, čuvaju se samo dok je stranica otvorena</div>
 </div>
@@ -166,8 +169,28 @@ let artikli = [
   {sifra:"0014", naziv:"WAGO stezaljke 3-pin (pak/100)",jm:"pak", nabavna:14.00, prodajna:22.00, lager:9,   min:5},
 ];
 
-let partneriDob = ["Elektromaterijal Volt d.o.o.","Kabel-Komerc d.o.o.","ElTeh distribucija d.o.o.","Elnet veletrgovina d.o.o."];
-let partneriKup = ["GP Gradnja d.o.o.","Stan Invest d.o.o.","Fizičko lice — stambeni objekat","Gotovinski kupac"];
+// Podaci firme (za zaglavlje štampe)
+const FIRMA = {
+  naziv:"BiM Elektro d.o.o.", djelatnost:"Elektroinstalacije i održavanje",
+  adresa:"Bulevar vojvode Stepe Stepanovića 12, 78000 Banja Luka",
+  jib:"4404123456789", pdv:"404123456789", ziro:"562-099-0001234567-89 (NLB Banka)",
+  telefon:"+387 65 123 456", email:"info@bim-elektro.ba"
+};
+
+// Registar partnera (dobavljači/kupci) — tip: "dobavljac" | "kupac" | "oboje"
+let partneri = [
+  {naziv:"Elektromaterijal Volt d.o.o.", tip:"dobavljac", jib:"4401111000001", kontakt:"065/210-111"},
+  {naziv:"Kabel-Komerc d.o.o.",          tip:"dobavljac", jib:"4401111000002", kontakt:"051/300-222"},
+  {naziv:"ElTeh distribucija d.o.o.",    tip:"dobavljac", jib:"4401111000003", kontakt:"065/330-333"},
+  {naziv:"Elnet veletrgovina d.o.o.",    tip:"dobavljac", jib:"4401111000004", kontakt:"051/400-444"},
+  {naziv:"GP Gradnja d.o.o.",            tip:"kupac",     jib:"4402222000001", kontakt:"051/500-555"},
+  {naziv:"Stan Invest d.o.o.",           tip:"kupac",     jib:"4402222000002", kontakt:"065/600-666"},
+  {naziv:"Fizičko lice — stambeni objekat", tip:"kupac",  jib:"",              kontakt:""},
+  {naziv:"Gotovinski kupac",             tip:"kupac",     jib:"",              kontakt:""},
+];
+const dobavljaci = () => partneri.filter(p=>p.tip==="dobavljac"||p.tip==="oboje");
+const kupci      = () => partneri.filter(p=>p.tip==="kupac"||p.tip==="oboje");
+const partner    = n => partneri.find(p=>p.naziv===n);
 
 let ulazi = [
   {broj:"UL-0001", datum:"2026-09-01", partner:"Elektromaterijal Volt d.o.o.", stavke:[
@@ -223,6 +246,7 @@ function render(){
   else if(view==="artikli") el.innerHTML=viewArtikli();
   else if(view==="ulaz") el.innerHTML=viewDocs("ulaz");
   else if(view==="izlaz") el.innerHTML=viewDocs("izlaz");
+  else if(view==="partneri") el.innerHTML=viewPartneri();
   else if(view==="izvjestaji") el.innerHTML=viewIzvjestaji();
 }
 
@@ -294,6 +318,10 @@ function viewArtikli(){
         <td class="num">${km(a.prodajna)}</td>
         <td class="num">${fmt(marza)} %</td>
         <td class="num">${a.lager}</td>
+        <td class="rowacts">
+          <button class="btn sm ghost" title="Izmijeni" onclick="openArtikal('${a.sifra}')">✎</button>
+          <button class="btn sm danger" title="Obriši" onclick="deleteArtikal('${a.sifra}')">×</button>
+        </td>
       </tr>`;
     }).join("");
 
@@ -311,9 +339,9 @@ function viewArtikli(){
           <thead><tr>
             <th>Šifra</th><th>Naziv</th><th>JM</th>
             <th class="num">Nabavna</th><th class="num">Prodajna</th>
-            <th class="num">Marža</th><th class="num">Lager</th>
+            <th class="num">Marža</th><th class="num">Lager</th><th></th>
           </tr></thead>
-          <tbody>${rows || `<tr><td colspan="7" class="empty">Nema rezultata.</td></tr>`}</tbody>
+          <tbody>${rows || `<tr><td colspan="8" class="empty">Nema rezultata.</td></tr>`}</tbody>
         </table>
       </div>
     </div>`;
@@ -385,8 +413,200 @@ function showDoc(kind,broj){
       </table>
       <div class="doc-total">Ukupno: ${km(docTotal(d))}</div>
     </div>
-    <div class="mfoot"><button class="btn" onclick="closeModal()">Zatvori</button></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Zatvori</button>
+      <button class="btn primary" onclick="printDoc('${kind}','${d.broj}')">🖨 Štampaj / PDF</button>
+    </div>
   `);
+}
+
+/* --- Štampa dokumenta (otvara print prozor → štampa ili sačuvaj kao PDF) --- */
+function printDoc(kind,broj){
+  const arr = kind==="ulaz" ? ulazi : izlazi;
+  const d = arr.find(x=>x.broj===broj);
+  const isUlaz = kind==="ulaz";
+  const naslov = isUlaz ? "PRIJEMNICA" : "OTPREMNICA";
+  const partnerLabel = isUlaz ? "Dobavljač" : "Kupac";
+  const p = partner(d.partner) || {naziv:d.partner};
+
+  let osnovica=0;
+  const redovi = d.stavke.map((s,i)=>{
+    const iznos=s.kol*s.cijena; osnovica+=iznos; const a=art(s.sifra)||{};
+    return `<tr>
+      <td>${i+1}</td><td>${s.sifra}</td><td>${artNaziv(s.sifra)}</td>
+      <td style="text-align:center">${a.jm||""}</td>
+      <td class="r">${s.kol}</td><td class="r">${fmt(s.cijena)}</td><td class="r">${fmt(iznos)}</td>
+    </tr>`;
+  }).join("");
+  const pdv = osnovica*0.17;
+  const ukupno = osnovica + pdv;
+
+  const html = `<!DOCTYPE html><html lang="bs"><head><meta charset="utf-8">
+  <title>${naslov} ${d.broj}</title>
+  <style>
+    *{box-sizing:border-box} body{font-family:-apple-system,Segoe UI,Arial,sans-serif;color:#16241f;margin:0;padding:28px 32px;font-size:13px}
+    .head{display:flex;justify-content:space-between;border-bottom:3px solid #0f5132;padding-bottom:12px;margin-bottom:16px}
+    .firma .nm{font-size:18px;font-weight:700;color:#0f5132}
+    .firma div{margin-top:2px;color:#333;font-size:12px}
+    .doc-title{text-align:right}
+    .doc-title h1{margin:0;font-size:24px;letter-spacing:1px;color:#0f5132}
+    .doc-title .no{font-size:15px;font-weight:700;margin-top:4px}
+    .doc-title .dt{color:#555;font-size:12px}
+    .meta{display:flex;gap:40px;margin:14px 0 18px}
+    .meta .box{flex:1}
+    .meta .lab{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#888}
+    .meta .val{font-weight:600;margin-top:2px}
+    table{width:100%;border-collapse:collapse;margin-top:6px}
+    th,td{border:1px solid #cdd8d2;padding:7px 8px}
+    th{background:#e9f0ec;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:#0f5132}
+    td.r,th.r{text-align:right}
+    .sum{margin-top:12px;margin-left:auto;width:280px}
+    .sum tr td{border:none;padding:3px 8px}
+    .sum .tot td{border-top:2px solid #0f5132;font-weight:700;font-size:15px;color:#0f5132}
+    .sign{display:flex;justify-content:space-between;margin-top:48px}
+    .sign .s{width:200px;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:12px;color:#555}
+    .foot{margin-top:30px;border-top:1px solid #ddd;padding-top:8px;font-size:10.5px;color:#888;text-align:center}
+    @media print{ body{padding:0} .noprint{display:none} }
+  </style></head><body>
+    <div class="head">
+      <div class="firma">
+        <div class="nm">${FIRMA.naziv}</div>
+        <div>${FIRMA.djelatnost}</div>
+        <div>${FIRMA.adresa}</div>
+        <div>JIB: ${FIRMA.jib} · PDV: ${FIRMA.pdv}</div>
+        <div>Žiro: ${FIRMA.ziro}</div>
+        <div>${FIRMA.telefon} · ${FIRMA.email}</div>
+      </div>
+      <div class="doc-title">
+        <h1>${naslov}</h1>
+        <div class="no">Broj: ${d.broj}</div>
+        <div class="dt">Datum: ${d.datum}</div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="box"><div class="lab">${partnerLabel}</div><div class="val">${p.naziv}</div>
+        ${p.jib?`<div>JIB: ${p.jib}</div>`:""}${p.kontakt?`<div>Kontakt: ${p.kontakt}</div>`:""}</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Šifra</th><th>Naziv artikla</th><th style="text-align:center">JM</th><th class="r">Količina</th><th class="r">Cijena</th><th class="r">Iznos</th></tr></thead>
+      <tbody>${redovi}</tbody>
+    </table>
+    <table class="sum">
+      <tr><td>Osnovica:</td><td class="r">${km(osnovica)}</td></tr>
+      <tr><td>PDV (17%):</td><td class="r">${km(pdv)}</td></tr>
+      <tr class="tot"><td>UKUPNO:</td><td class="r">${km(ukupno)}</td></tr>
+    </table>
+    <div class="sign"><div class="s">Robu izdao</div><div class="s">Robu primio</div></div>
+    <div class="foot">Dokument generisan iz Aktivo — robno knjigovodstvo (demo). Nije fiskalni dokument.</div>
+    <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`;
+
+  const w = window.open("", "_blank");
+  if(!w){ alert("Dozvolite pop-up prozore da biste štampali dokument."); return; }
+  w.document.write(html); w.document.close();
+}
+
+/* ================= PARTNERI ================= */
+const TIP_LABEL = {dobavljac:"Dobavljač", kupac:"Kupac", oboje:"Dobavljač i kupac"};
+const TIP_PILL  = {dobavljac:"in", kupac:"doc", oboje:"ok"};
+
+function prometPartnera(naziv){
+  let s=0;
+  ulazi.forEach(d=>{ if(d.partner===naziv) s+=docTotal(d); });
+  izlazi.forEach(d=>{ if(d.partner===naziv) s+=docTotal(d); });
+  return s;
+}
+
+function viewPartneri(){
+  const rows = partneri
+    .filter(p=>(p.naziv+(p.jib||"")).toLowerCase().includes(search))
+    .map((p,idx)=>`
+      <tr>
+        <td>${p.naziv}</td>
+        <td><span class="pill ${TIP_PILL[p.tip]}">${TIP_LABEL[p.tip]}</span></td>
+        <td>${p.jib||"—"}</td>
+        <td>${p.kontakt||"—"}</td>
+        <td class="num">${km(prometPartnera(p.naziv))}</td>
+        <td class="rowacts">
+          <button class="btn sm ghost" title="Izmijeni" onclick="openPartner(${idx})">✎</button>
+          <button class="btn sm danger" title="Obriši" onclick="deletePartner(${idx})">×</button>
+        </td>
+      </tr>`).join("");
+
+  const nDob=dobavljaci().length, nKup=kupci().length;
+  return `
+    <h1 class="view-title">Partneri</h1>
+    <p class="view-sub">Registar dobavljača i kupaca. Partneri se biraju pri unosu ulaza i izlaza robe.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="big">${partneri.length}</div><div class="lab">Ukupno partnera</div></div>
+      <div class="stat"><div class="big">${nDob}</div><div class="lab">Dobavljači</div></div>
+      <div class="stat"><div class="big">${nKup}</div><div class="lab">Kupci</div></div>
+    </div>
+    <div class="panel">
+      <div class="phead"><h3>Registar partnera</h3><div class="spacer"></div></div>
+      <div class="pbody">
+        <div class="toolbar-row">
+          <input class="search" placeholder="Pretraga partnera..." oninput="onSearch(this.value)">
+          <button class="btn primary" onclick="openPartner()">+ Novi partner</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Naziv</th><th>Tip</th><th>JIB/PDV</th><th>Kontakt</th><th class="num">Promet</th><th></th>
+          </tr></thead>
+          <tbody>${rows || `<tr><td colspan="6" class="empty">Nema rezultata.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function openPartner(idx){
+  const edit = idx!==undefined;
+  const p = edit ? partneri[idx] : {naziv:"", tip:"dobavljac", jib:"", kontakt:""};
+  const tipOpt = t => `<option value="${t}" ${p.tip===t?"selected":""}>${TIP_LABEL[t]}</option>`;
+  openModal(`
+    <div class="mhead"><h3>${edit?"Izmjena partnera":"Novi partner"}</h3><div class="spacer"></div><button class="x" onclick="closeModal()">×</button></div>
+    <div class="mbody">
+      <div class="field"><label>Naziv</label><input id="p-naziv" value="${p.naziv}" placeholder="npr. Elektromaterijal Volt d.o.o."></div>
+      <div class="grid2">
+        <div class="field"><label>Tip partnera</label>
+          <select id="p-tip">${tipOpt("dobavljac")}${tipOpt("kupac")}${tipOpt("oboje")}</select></div>
+        <div class="field"><label>JIB / PDV broj</label><input id="p-jib" value="${p.jib||""}"></div>
+      </div>
+      <div class="field"><label>Kontakt (telefon/email)</label><input id="p-kontakt" value="${p.kontakt||""}"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Odustani</button>
+      <button class="btn primary" onclick="savePartner(${edit?idx:"null"})">${edit?"Sačuvaj izmjene":"Sačuvaj partnera"}</button>
+    </div>`);
+}
+function savePartner(idx){
+  const g=id=>document.getElementById(id).value;
+  const naziv=g("p-naziv").trim();
+  if(!naziv){ alert("Unesite naziv partnera."); return; }
+  const vals={naziv, tip:g("p-tip"), jib:g("p-jib").trim(), kontakt:g("p-kontakt").trim()};
+  if(idx!==null){
+    const staro = partneri[idx].naziv;
+    partneri[idx]=vals;
+    // ako je naziv promijenjen, ažuriraj postojeće dokumente da veza ostane
+    if(staro!==naziv){
+      ulazi.forEach(d=>{ if(d.partner===staro) d.partner=naziv; });
+      izlazi.forEach(d=>{ if(d.partner===staro) d.partner=naziv; });
+    }
+  } else {
+    if(partner(naziv)){ alert("Partner s tim nazivom već postoji."); return; }
+    partneri.push(vals);
+  }
+  closeModal(); render();
+}
+function deletePartner(idx){
+  const p=partneri[idx]; if(!p) return;
+  const used = ulazi.some(d=>d.partner===p.naziv) || izlazi.some(d=>d.partner===p.naziv);
+  const msg = used
+    ? `Partner "${p.naziv}" ima vezane dokumente. Obrisati ga iz registra?\n(Dokumenti ostaju, zadržavaju upisani naziv.)`
+    : `Obrisati partnera "${p.naziv}"?`;
+  if(!confirm(msg)) return;
+  partneri.splice(idx,1);
+  render();
 }
 
 /* ================= IZVJEŠTAJI ================= */
@@ -451,39 +671,55 @@ function openModal(html){
 function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
 
-/* --- Novi artikal --- */
-function openArtikal(){
-  const nextS = String(artikli.length+1).padStart(4,"0");
+/* --- Novi / izmjena artikla --- */
+function openArtikal(sifra){
+  const edit = !!sifra;
+  const a = edit ? art(sifra) : {sifra:String(artikli.length+1).padStart(4,"0"), jm:JM[0], naziv:"", nabavna:0, prodajna:0, lager:0, min:0};
   openModal(`
-    <div class="mhead"><h3>Novi artikal</h3><div class="spacer"></div><button class="x" onclick="closeModal()">×</button></div>
+    <div class="mhead"><h3>${edit?"Izmjena artikla":"Novi artikal"}</h3><div class="spacer"></div><button class="x" onclick="closeModal()">×</button></div>
     <div class="mbody">
       <div class="grid2">
-        <div class="field"><label>Šifra</label><input id="a-sifra" value="${nextS}"></div>
+        <div class="field"><label>Šifra</label><input id="a-sifra" value="${a.sifra}" ${edit?"readonly":""}></div>
         <div class="field"><label>Jedinica mjere</label>
-          <select id="a-jm">${JM.map(j=>`<option>${j}</option>`).join("")}</select></div>
+          <select id="a-jm">${JM.map(j=>`<option ${j===a.jm?"selected":""}>${j}</option>`).join("")}</select></div>
       </div>
-      <div class="field"><label>Naziv</label><input id="a-naziv" placeholder="npr. Brašno T-500 (1kg)"></div>
+      <div class="field"><label>Naziv</label><input id="a-naziv" value="${a.naziv}" placeholder="npr. Kabl NYM-J 3x1.5mm²"></div>
       <div class="grid2">
-        <div class="field"><label>Nabavna cijena (KM)</label><input id="a-nab" type="number" step="0.01" value="0"></div>
-        <div class="field"><label>Prodajna cijena (KM)</label><input id="a-pro" type="number" step="0.01" value="0"></div>
+        <div class="field"><label>Nabavna cijena (KM)</label><input id="a-nab" type="number" step="0.01" value="${a.nabavna}"></div>
+        <div class="field"><label>Prodajna cijena (KM)</label><input id="a-pro" type="number" step="0.01" value="${a.prodajna}"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Početni lager</label><input id="a-lager" type="number" value="0"></div>
-        <div class="field"><label>Minimalna zaliha</label><input id="a-min" type="number" value="0"></div>
+        <div class="field"><label>${edit?"Lager (stanje)":"Početni lager"}</label><input id="a-lager" type="number" value="${a.lager}"></div>
+        <div class="field"><label>Minimalna zaliha</label><input id="a-min" type="number" value="${a.min}"></div>
       </div>
     </div>
     <div class="mfoot">
       <button class="btn" onclick="closeModal()">Odustani</button>
-      <button class="btn primary" onclick="saveArtikal()">Sačuvaj artikal</button>
+      <button class="btn primary" onclick="saveArtikal(${edit?`'${sifra}'`:"null"})">${edit?"Sačuvaj izmjene":"Sačuvaj artikal"}</button>
     </div>`);
 }
-function saveArtikal(){
+function saveArtikal(editSifra){
   const g=id=>document.getElementById(id).value;
   const sifra=g("a-sifra").trim(), naziv=g("a-naziv").trim();
   if(!naziv){ alert("Unesite naziv artikla."); return; }
-  if(art(sifra)){ alert("Artikal sa tom šifrom već postoji."); return; }
-  artikli.push({sifra,naziv,jm:g("a-jm"),nabavna:+g("a-nab")||0,prodajna:+g("a-pro")||0,lager:+g("a-lager")||0,min:+g("a-min")||0});
+  const vals={naziv, jm:g("a-jm"), nabavna:+g("a-nab")||0, prodajna:+g("a-pro")||0, lager:+g("a-lager")||0, min:+g("a-min")||0};
+  if(editSifra){
+    Object.assign(art(editSifra), vals);
+  } else {
+    if(art(sifra)){ alert("Artikal sa tom šifrom već postoji."); return; }
+    artikli.push({sifra, ...vals});
+  }
   closeModal(); render();
+}
+function deleteArtikal(sifra){
+  const a=art(sifra); if(!a) return;
+  const used = ulazi.some(d=>d.stavke.some(s=>s.sifra===sifra)) || izlazi.some(d=>d.stavke.some(s=>s.sifra===sifra));
+  const msg = used
+    ? `Artikal "${a.naziv}" se pojavljuje u dokumentima. Obrisati ga iz šifarnika?\n(Postojeći dokumenti ostaju, ali gube naziv artikla.)`
+    : `Obrisati artikal "${a.naziv}"?`;
+  if(!confirm(msg)) return;
+  artikli = artikli.filter(x=>x.sifra!==sifra);
+  render();
 }
 
 /* --- Ulaz / Izlaz forma --- */
@@ -522,7 +758,7 @@ function refreshStavke(kind){
 function docForm(kind){
   const isUlaz=kind==="ulaz";
   const broj=nextBroj(isUlaz?"UL":"IZ", isUlaz?ulazi:izlazi);
-  const partneri=isUlaz?partneriDob:partneriKup;
+  const lista=(isUlaz?dobavljaci():kupci());
   docStavke=[];
   const a=artikli[0];
   docStavke.push({sifra:a.sifra,kol:isUlaz?10:1,cijena:defaultCijena(a.sifra,kind)});
@@ -535,7 +771,7 @@ function docForm(kind){
         <div class="field"><label>Datum</label><input id="d-datum" type="date" value="${today()}"></div>
       </div>
       <div class="field"><label>${isUlaz?"Dobavljač":"Kupac"}</label>
-        <select id="d-partner">${partneri.map(p=>`<option>${p}</option>`).join("")}</select></div>
+        <select id="d-partner">${lista.map(p=>`<option>${p.naziv}</option>`).join("")}</select></div>
       <div class="field">
         <label>Stavke</label>
         <div class="stavke-head"><div>Artikal</div><div>Količina</div><div>Cijena</div><div style="text-align:right">Iznos</div><div></div></div>
