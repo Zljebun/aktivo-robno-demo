@@ -1,0 +1,4 @@
+# Lokalna infrastruktura / podešavanja — ne objavljivati javno
+.claude/
+robno-setup.sh
+.DS_Store
