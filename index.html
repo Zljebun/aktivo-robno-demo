@@ -112,6 +112,44 @@
   .footer-note{color:var(--muted);font-size:12.5px;text-align:center;padding:10px 0 24px}
   .doc-detail dt{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
   .doc-detail dd{margin:2px 0 12px;font-size:14px;font-weight:600}
+
+  /* ===== Telefon / uski ekran ===== */
+  @media (max-width:640px){
+    body{font-size:14px}
+    header{padding:9px 12px;flex-wrap:wrap;gap:8px}
+    header .badge{display:none}
+    main{padding:12px}
+    .toolbar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+    .tab{padding:12px 12px;white-space:nowrap}
+    .demo-flag{display:none}
+    h1.view-title{font-size:18px}
+    .stat{min-width:calc(50% - 7px);padding:12px 14px}
+    .stat .big{font-size:22px}
+    .toolbar-row{flex-direction:column;align-items:stretch}
+    .toolbar-row .btn{width:100%}
+    .overlay{padding:10px}
+    .modal{max-width:100%}
+    .modal .mbody{padding:16px}
+    .grid2{grid-template-columns:1fr}
+    .stavke-head{display:none}
+    .stavka{grid-template-columns:1fr 1fr;gap:6px;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:10px}
+    .stavka select{grid-column:1 / -1}
+    .stavka .rm{grid-column:2;justify-self:end;width:40px}
+
+    /* tabele koje nisu 'cards' → horizontalni scroll umjesto odsijecanja */
+    table:not(.cards){display:block;overflow-x:auto;white-space:nowrap}
+
+    /* glavne liste → kartice (svaki red je kartica, ništa se ne odsijeca) */
+    table.cards,table.cards tbody{display:block}
+    table.cards thead{display:none}
+    table.cards tr{display:block;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;padding:4px 12px;background:#fff;box-shadow:0 1px 2px rgba(20,40,30,.05)}
+    table.cards td{display:flex;justify-content:space-between;align-items:center;gap:12px;border:none;border-bottom:1px solid #eef3f0;padding:9px 0;text-align:right}
+    table.cards tr td:last-child{border-bottom:none}
+    table.cards td::before{content:attr(data-label);font-weight:600;color:var(--muted);text-align:left;white-space:nowrap}
+    table.cards td.rowacts{justify-content:flex-end;gap:8px;padding-top:10px}
+    table.cards td.rowacts::before{content:""}
+    table.cards td.rowacts .btn{margin-left:0;padding:7px 14px}
+  }
 </style>
 </head>
 <body>
@@ -260,14 +298,14 @@ function viewLager(){
     .map(a=>{
       const st=lagerStatus(a);
       return `<tr>
-        <td>${a.sifra}</td>
-        <td>${a.naziv}</td>
-        <td>${a.jm}</td>
-        <td class="num">${a.lager}</td>
-        <td class="num">${a.min}</td>
-        <td class="num">${km(a.nabavna)}</td>
-        <td class="num"><b>${km(a.lager*a.nabavna)}</b></td>
-        <td><span class="pill ${st.cls}">${st.txt}</span></td>
+        <td data-label="Šifra">${a.sifra}</td>
+        <td data-label="Naziv">${a.naziv}</td>
+        <td data-label="JM">${a.jm}</td>
+        <td class="num" data-label="Lager">${a.lager}</td>
+        <td class="num" data-label="Min">${a.min}</td>
+        <td class="num" data-label="Nab. cijena">${km(a.nabavna)}</td>
+        <td class="num" data-label="Vrijednost"><b>${km(a.lager*a.nabavna)}</b></td>
+        <td data-label="Status"><span class="pill ${st.cls}">${st.txt}</span></td>
       </tr>`;
     }).join("");
 
@@ -292,7 +330,7 @@ function viewLager(){
           <button class="btn primary" onclick="openUlaz()">+ Novi ulaz</button>
           <button class="btn" onclick="openIzlaz()">− Novi izlaz</button>
         </div>
-        <table>
+        <table class="cards">
           <thead><tr>
             <th>Šifra</th><th>Naziv</th><th>JM</th>
             <th class="num">Lager</th><th class="num">Min</th>
@@ -311,13 +349,13 @@ function viewArtikli(){
     .map(a=>{
       const marza = a.prodajna>0 ? ((a.prodajna-a.nabavna)/a.prodajna*100) : 0;
       return `<tr>
-        <td>${a.sifra}</td>
-        <td>${a.naziv}</td>
-        <td>${a.jm}</td>
-        <td class="num">${km(a.nabavna)}</td>
-        <td class="num">${km(a.prodajna)}</td>
-        <td class="num">${fmt(marza)} %</td>
-        <td class="num">${a.lager}</td>
+        <td data-label="Šifra">${a.sifra}</td>
+        <td data-label="Naziv">${a.naziv}</td>
+        <td data-label="JM">${a.jm}</td>
+        <td class="num" data-label="Nabavna">${km(a.nabavna)}</td>
+        <td class="num" data-label="Prodajna">${km(a.prodajna)}</td>
+        <td class="num" data-label="Marža">${fmt(marza)} %</td>
+        <td class="num" data-label="Lager">${a.lager}</td>
         <td class="rowacts">
           <button class="btn sm ghost" title="Izmijeni" onclick="openArtikal('${a.sifra}')">✎</button>
           <button class="btn sm danger" title="Obriši" onclick="deleteArtikal('${a.sifra}')">×</button>
@@ -335,7 +373,7 @@ function viewArtikli(){
           <input class="search" placeholder="Pretraga artikla..." oninput="onSearch(this.value)">
           <button class="btn primary" onclick="openArtikal()">+ Novi artikal</button>
         </div>
-        <table>
+        <table class="cards">
           <thead><tr>
             <th>Šifra</th><th>Naziv</th><th>JM</th>
             <th class="num">Nabavna</th><th class="num">Prodajna</th>
@@ -359,12 +397,12 @@ function viewDocs(kind){
 
   const rows = arr.slice().reverse().map(d=>`
     <tr>
-      <td><span class="pill doc">${d.broj}</span></td>
-      <td>${d.datum}</td>
-      <td>${d.partner}</td>
-      <td class="num">${d.stavke.length}</td>
-      <td class="num"><b>${km(docTotal(d))}</b></td>
-      <td><button class="btn sm ghost" onclick="showDoc('${kind}','${d.broj}')">Pogledaj</button></td>
+      <td data-label="Broj"><span class="pill doc">${d.broj}</span></td>
+      <td data-label="Datum">${d.datum}</td>
+      <td data-label="${partnerCol}">${d.partner}</td>
+      <td class="num" data-label="Stavki">${d.stavke.length}</td>
+      <td class="num" data-label="Vrijednost"><b>${km(docTotal(d))}</b></td>
+      <td class="rowacts"><button class="btn sm ghost" onclick="showDoc('${kind}','${d.broj}')">Pogledaj</button></td>
     </tr>`).join("");
 
   const ukupno = arr.reduce((s,d)=>s+docTotal(d),0);
@@ -381,7 +419,7 @@ function viewDocs(kind){
         <button class="btn primary" onclick="${isUlaz?'openUlaz()':'openIzlaz()'}">+ Novi ${isUlaz?'ulaz':'izlaz'}</button>
       </div>
       <div class="pbody">
-        <table>
+        <table class="cards">
           <thead><tr>
             <th>Broj</th><th>Datum</th><th>${partnerCol}</th>
             <th class="num">Stavki</th><th class="num">Vrijednost</th><th></th>
@@ -531,11 +569,11 @@ function viewPartneri(){
     .filter(p=>(p.naziv+(p.jib||"")).toLowerCase().includes(search))
     .map((p,idx)=>`
       <tr>
-        <td>${p.naziv}</td>
-        <td><span class="pill ${TIP_PILL[p.tip]}">${TIP_LABEL[p.tip]}</span></td>
-        <td>${p.jib||"—"}</td>
-        <td>${p.kontakt||"—"}</td>
-        <td class="num">${km(prometPartnera(p.naziv))}</td>
+        <td data-label="Naziv">${p.naziv}</td>
+        <td data-label="Tip"><span class="pill ${TIP_PILL[p.tip]}">${TIP_LABEL[p.tip]}</span></td>
+        <td data-label="JIB/PDV">${p.jib||"—"}</td>
+        <td data-label="Kontakt">${p.kontakt||"—"}</td>
+        <td class="num" data-label="Promet">${km(prometPartnera(p.naziv))}</td>
         <td class="rowacts">
           <button class="btn sm ghost" title="Izmijeni" onclick="openPartner(${idx})">✎</button>
           <button class="btn sm danger" title="Obriši" onclick="deletePartner(${idx})">×</button>
@@ -558,7 +596,7 @@ function viewPartneri(){
           <input class="search" placeholder="Pretraga partnera..." oninput="onSearch(this.value)">
           <button class="btn primary" onclick="openPartner()">+ Novi partner</button>
         </div>
-        <table>
+        <table class="cards">
           <thead><tr>
             <th>Naziv</th><th>Tip</th><th>JIB/PDV</th><th>Kontakt</th><th class="num">Promet</th><th></th>
           </tr></thead>
