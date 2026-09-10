@@ -498,12 +498,21 @@ function printDoc(kind,broj){
     </table>
     <div class="sign"><div class="s">Robu izdao</div><div class="s">Robu primio</div></div>
     <div class="foot">Dokument generisan iz Aktivo — robno knjigovodstvo (demo). Nije fiskalni dokument.</div>
-    <script>window.onload=function(){window.print();}<\/script>
   </body></html>`;
 
-  const w = window.open("", "_blank");
-  if(!w){ alert("Dozvolite pop-up prozore da biste štampali dokument."); return; }
-  w.document.write(html); w.document.close();
+  // Štampa preko skrivenog iframe-a (bez pop-up prozora → radi i uz popup-blocker)
+  let f = document.getElementById("print-frame");
+  if(!f){
+    f = document.createElement("iframe");
+    f.id = "print-frame";
+    f.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
+    document.body.appendChild(f);
+  }
+  const idoc = f.contentWindow.document;
+  idoc.open(); idoc.write(html); idoc.close();
+  const doPrint = () => { f.contentWindow.focus(); f.contentWindow.print(); };
+  if(idoc.readyState === "complete") setTimeout(doPrint, 200);
+  else f.onload = () => setTimeout(doPrint, 200);
 }
 
 /* ================= PARTNERI ================= */
