@@ -582,8 +582,20 @@ function saveDoc(kind){
 render();
 </script>
 
-<!-- GoatCounter — brojač posjeta (privacy-friendly). Aktiviraj registracijom koda "aktivo-robno" na goatcounter.com
+<!-- GoatCounter — brojač posjeta (privacy-friendly, bez kolačića).
+     Radi čim se na goatcounter.com registruje sajt s kodom "aktivo-robno". -->
+<script>
+  // Isključi vlastite posjete: otvori .../#skipgc jednom u svakom svom browseru/uređaju.
+  // GoatCounter-ov count.js ne broji posjetu ako je u localStorage postavljen "skipgc"="t".
+  if (location.hash === '#skipgc') {
+    localStorage.setItem('skipgc', 't');
+    alert('Vaše posjete se više neće brojati na ovom uređaju/browseru.');
+  }
+  if (location.hash === '#countgc') {   // po potrebi ponovo uključi brojanje
+    localStorage.removeItem('skipgc');
+    alert('Brojanje posjeta je ponovo uključeno na ovom uređaju/browseru.');
+  }
+</script>
 <script data-goatcounter="https://aktivo-robno.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
--->
 </body>
 </html>
