@@ -121,7 +121,7 @@
     <div class="tag">ROBNO KNJIGOVODSTVO</div>
   </div>
   <div class="spacer"></div>
-  <div class="badge">Demo klijent: TP „Zelena pijaca" d.o.o.</div>
+  <div class="badge">Klijent: BiM Elektro d.o.o. — elektroinstalacije</div>
   <div class="user"><span>Pedja M.</span><div class="avatar">PM</div></div>
 </header>
 
@@ -150,35 +150,41 @@
 const JM = ["kom","kg","l","pak","m"];
 
 let artikli = [
-  {sifra:"0001", naziv:"Brašno T-500 (1kg)",       jm:"kom", nabavna:1.45, prodajna:1.90, lager:120, min:40},
-  {sifra:"0002", naziv:"Šećer kristal (1kg)",       jm:"kom", nabavna:1.80, prodajna:2.35, lager:85,  min:30},
-  {sifra:"0003", naziv:"Ulje suncokretovo (1l)",    jm:"kom", nabavna:2.60, prodajna:3.40, lager:24,  min:30},
-  {sifra:"0004", naziv:"Mlijeko 2.8% (1l)",         jm:"kom", nabavna:1.55, prodajna:2.05, lager:60,  min:24},
-  {sifra:"0005", naziv:"Kafa mljevena (500g)",      jm:"kom", nabavna:6.20, prodajna:8.50, lager:38,  min:15},
-  {sifra:"0006", naziv:"Deterdžent za veš (3kg)",   jm:"kom", nabavna:9.90, prodajna:13.90,lager:12,  min:8},
-  {sifra:"0007", naziv:"Voda negazirana (1.5l)",    jm:"kom", nabavna:0.55, prodajna:0.90, lager:240, min:80},
-  {sifra:"0008", naziv:"Čokolada mliječna (100g)",  jm:"kom", nabavna:1.10, prodajna:1.70, lager:5,   min:20},
+  {sifra:"0001", naziv:"Kabl NYM-J 3x1.5mm²",           jm:"m",   nabavna:1.10,  prodajna:1.60,  lager:320, min:100},
+  {sifra:"0002", naziv:"Kabl NYM-J 3x2.5mm²",           jm:"m",   nabavna:1.75,  prodajna:2.40,  lager:240, min:100},
+  {sifra:"0003", naziv:"Kabl PP-Y 5x2.5mm²",            jm:"m",   nabavna:3.20,  prodajna:4.30,  lager:80,  min:40},
+  {sifra:"0004", naziv:"Instalaciona gibljiva cijev Ø16",jm:"m",  nabavna:0.35,  prodajna:0.65,  lager:150, min:80},
+  {sifra:"0005", naziv:"Razvodna kutija p/ž Ø60",       jm:"kom", nabavna:0.45,  prodajna:0.90,  lager:75,  min:40},
+  {sifra:"0006", naziv:"Prekidač jednopolni (bijeli)",  jm:"kom", nabavna:4.50,  prodajna:7.20,  lager:32,  min:20},
+  {sifra:"0007", naziv:"Prekidač naizmjenični (serija)",jm:"kom", nabavna:5.30,  prodajna:8.40,  lager:16,  min:15},
+  {sifra:"0008", naziv:"Utičnica šuko 16A",             jm:"kom", nabavna:5.20,  prodajna:8.00,  lager:40,  min:25},
+  {sifra:"0009", naziv:"Automatski osigurač B16 1P",    jm:"kom", nabavna:3.80,  prodajna:6.00,  lager:50,  min:30},
+  {sifra:"0010", naziv:"FID sklopka 40A/0.03A 4P",      jm:"kom", nabavna:28.00, prodajna:44.00, lager:6,   min:5},
+  {sifra:"0011", naziv:"Razvodni orman 12 modula n/ž",  jm:"kom", nabavna:22.00, prodajna:35.00, lager:4,   min:3},
+  {sifra:"0012", naziv:"LED panel 60x60 40W 4000K",     jm:"kom", nabavna:24.00, prodajna:38.00, lager:12,  min:8},
+  {sifra:"0013", naziv:"LED sijalica E27 9W",           jm:"kom", nabavna:1.80,  prodajna:3.20,  lager:8,   min:24},
+  {sifra:"0014", naziv:"WAGO stezaljke 3-pin (pak/100)",jm:"pak", nabavna:14.00, prodajna:22.00, lager:9,   min:5},
 ];
 
-let partneriDob = ["Veletrgovina Merkur d.o.o.","AgroDistrib d.o.o.","Kafa-Import s.p.","Higijena Plus d.o.o."];
-let partneriKup = ["Maloprodaja br. 1 — Centar","Maloprodaja br. 2 — Borik","Ugostitelj „Kod Mile\"","Gotovinski kupac"];
+let partneriDob = ["Elektromaterijal Volt d.o.o.","Kabel-Komerc d.o.o.","ElTeh distribucija d.o.o.","Elnet veletrgovina d.o.o."];
+let partneriKup = ["GP Gradnja d.o.o.","Stan Invest d.o.o.","Fizičko lice — stambeni objekat","Gotovinski kupac"];
 
 let ulazi = [
-  {broj:"UL-0001", datum:"2026-09-01", partner:"Veletrgovina Merkur d.o.o.", stavke:[
-    {sifra:"0001", kol:100, cijena:1.45}, {sifra:"0002", kol:60, cijena:1.80}, {sifra:"0007", kol:200, cijena:0.55}]},
-  {broj:"UL-0002", datum:"2026-09-03", partner:"Kafa-Import s.p.", stavke:[
-    {sifra:"0005", kol:40, cijena:6.20}]},
-  {broj:"UL-0003", datum:"2026-09-05", partner:"AgroDistrib d.o.o.", stavke:[
-    {sifra:"0003", kol:50, cijena:2.60}, {sifra:"0004", kol:80, cijena:1.55}]},
+  {broj:"UL-0001", datum:"2026-09-01", partner:"Elektromaterijal Volt d.o.o.", stavke:[
+    {sifra:"0001", kol:300, cijena:1.10}, {sifra:"0002", kol:200, cijena:1.75}, {sifra:"0004", kol:150, cijena:0.35}]},
+  {broj:"UL-0002", datum:"2026-09-03", partner:"Kabel-Komerc d.o.o.", stavke:[
+    {sifra:"0006", kol:40, cijena:4.50}, {sifra:"0008", kol:50, cijena:5.20}, {sifra:"0005", kol:100, cijena:0.45}]},
+  {broj:"UL-0003", datum:"2026-09-05", partner:"ElTeh distribucija d.o.o.", stavke:[
+    {sifra:"0009", kol:60, cijena:3.80}, {sifra:"0010", kol:8, cijena:28.00}, {sifra:"0011", kol:5, cijena:22.00}, {sifra:"0012", kol:12, cijena:24.00}]},
 ];
 
 let izlazi = [
-  {broj:"IZ-0001", datum:"2026-09-02", partner:"Maloprodaja br. 1 — Centar", stavke:[
-    {sifra:"0001", kol:30, cijena:1.90}, {sifra:"0007", kol:60, cijena:0.90}]},
-  {broj:"IZ-0002", datum:"2026-09-04", partner:"Ugostitelj „Kod Mile\"", stavke:[
-    {sifra:"0005", kol:8, cijena:8.50}, {sifra:"0004", kol:20, cijena:2.05}]},
-  {broj:"IZ-0003", datum:"2026-09-06", partner:"Maloprodaja br. 2 — Borik", stavke:[
-    {sifra:"0003", kol:26, cijena:3.40}, {sifra:"0008", kol:15, cijena:1.70}]},
+  {broj:"IZ-0001", datum:"2026-09-02", partner:"GP Gradnja d.o.o.", stavke:[
+    {sifra:"0001", kol:120, cijena:1.60}, {sifra:"0004", kol:60, cijena:0.65}, {sifra:"0005", kol:25, cijena:0.90}]},
+  {broj:"IZ-0002", datum:"2026-09-04", partner:"Fizičko lice — stambeni objekat", stavke:[
+    {sifra:"0006", kol:8, cijena:7.20}, {sifra:"0008", kol:10, cijena:8.00}, {sifra:"0013", kol:12, cijena:3.20}]},
+  {broj:"IZ-0003", datum:"2026-09-06", partner:"Stan Invest d.o.o.", stavke:[
+    {sifra:"0011", kol:2, cijena:35.00}, {sifra:"0009", kol:10, cijena:6.00}, {sifra:"0010", kol:2, cijena:44.00}]},
 ];
 
 let view = "lager";
