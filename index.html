@@ -113,6 +113,25 @@
   .doc-detail dt{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
   .doc-detail dd{margin:2px 0 12px;font-size:14px;font-weight:600}
 
+  /* ===== Rasklopive kartice (Lager) ===== */
+  .lcard{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;background:#fff;margin-bottom:8px;overflow:hidden}
+  .lcard.ok{border-left-color:var(--ok)} .lcard.low{border-left-color:var(--warn)} .lcard.out{border-left-color:var(--late)}
+  .lc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}
+  .lc-head:hover{background:#f5f9f7}
+  .lc-title{display:flex;align-items:center;gap:10px;min-width:0}
+  .lc-title .chev{color:var(--muted);font-size:12px;transition:transform .15s;flex:none}
+  .lcard.open .lc-title .chev{transform:rotate(90deg)}
+  .lc-naziv{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lc-right{display:flex;align-items:center;gap:12px;white-space:nowrap;flex:none}
+  .lc-kol{font-weight:700;font-variant-numeric:tabular-nums}
+  .lc-body{display:none;padding:4px 14px 12px;border-top:1px solid var(--line)}
+  .lcard.open .lc-body{display:block}
+  .lc-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #f0f4f2;font-size:14px}
+  .lc-row:last-child{border-bottom:none}
+  .lc-row .k{color:var(--muted)} .lc-row .v{font-weight:600;font-variant-numeric:tabular-nums}
+  .lc-tools{display:flex;gap:10px;margin:2px 0 12px}
+  .lc-tools .btn{padding:6px 12px}
+
   /* ===== Telefon / uski ekran ===== */
   @media (max-width:640px){
     body{font-size:14px}
@@ -297,16 +316,24 @@ function viewLager(){
     .filter(a=>(a.naziv+a.sifra).toLowerCase().includes(search))
     .map(a=>{
       const st=lagerStatus(a);
-      return `<tr>
-        <td data-label="Šifra">${a.sifra}</td>
-        <td data-label="Naziv">${a.naziv}</td>
-        <td data-label="JM">${a.jm}</td>
-        <td class="num" data-label="Lager">${a.lager}</td>
-        <td class="num" data-label="Min">${a.min}</td>
-        <td class="num" data-label="Nab. cijena">${km(a.nabavna)}</td>
-        <td class="num" data-label="Vrijednost"><b>${km(a.lager*a.nabavna)}</b></td>
-        <td data-label="Status"><span class="pill ${st.cls}">${st.txt}</span></td>
-      </tr>`;
+      return `<div class="lcard ${st.cls}">
+        <div class="lc-head" onclick="this.parentNode.classList.toggle('open')">
+          <div class="lc-title"><span class="chev">▸</span><span class="lc-naziv">${a.naziv}</span></div>
+          <div class="lc-right">
+            <span class="lc-kol">${a.lager} ${a.jm}</span>
+            <span class="pill ${st.cls}">${st.txt}</span>
+          </div>
+        </div>
+        <div class="lc-body">
+          <div class="lc-row"><span class="k">Šifra</span><span class="v">${a.sifra}</span></div>
+          <div class="lc-row"><span class="k">Jedinica mjere</span><span class="v">${a.jm}</span></div>
+          <div class="lc-row"><span class="k">Lager (stanje)</span><span class="v">${a.lager} ${a.jm}</span></div>
+          <div class="lc-row"><span class="k">Minimalna zaliha</span><span class="v">${a.min} ${a.jm}</span></div>
+          <div class="lc-row"><span class="k">Nabavna cijena</span><span class="v">${km(a.nabavna)}</span></div>
+          <div class="lc-row"><span class="k">Vrijednost zaliha</span><span class="v">${km(a.lager*a.nabavna)}</span></div>
+          <div class="lc-row"><span class="k">Status</span><span class="v"><span class="pill ${st.cls}">${st.txt}</span></span></div>
+        </div>
+      </div>`;
     }).join("");
 
   const vrijednost = artikli.reduce((s,a)=>s+a.lager*a.nabavna,0);
@@ -330,16 +357,16 @@ function viewLager(){
           <button class="btn primary" onclick="openUlaz()">+ Novi ulaz</button>
           <button class="btn" onclick="openIzlaz()">− Novi izlaz</button>
         </div>
-        <table class="cards">
-          <thead><tr>
-            <th>Šifra</th><th>Naziv</th><th>JM</th>
-            <th class="num">Lager</th><th class="num">Min</th>
-            <th class="num">Nab. cijena</th><th class="num">Vrijednost</th><th>Status</th>
-          </tr></thead>
-          <tbody>${rows || `<tr><td colspan="8" class="empty">Nema rezultata.</td></tr>`}</tbody>
-        </table>
+        <div class="lc-tools">
+          <button class="btn sm ghost" onclick="toggleAllCards(true)">Rasklopi sve</button>
+          <button class="btn sm ghost" onclick="toggleAllCards(false)">Sklopi sve</button>
+        </div>
+        ${rows || `<div class="empty">Nema rezultata.</div>`}
       </div>
     </div>`;
+}
+function toggleAllCards(open){
+  document.querySelectorAll(".lcard").forEach(c=>c.classList.toggle("open", open));
 }
 
 /* ================= ARTIKLI ================= */
