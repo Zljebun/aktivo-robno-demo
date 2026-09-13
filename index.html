@@ -131,6 +131,8 @@
   .lc-row .k{color:var(--muted)} .lc-row .v{font-weight:600;font-variant-numeric:tabular-nums}
   .lc-tools{display:flex;gap:10px;margin:2px 0 12px}
   .lc-tools .btn{padding:6px 12px}
+  .lc-actions{display:flex;gap:10px;justify-content:flex-end;padding-top:12px}
+  .lc-actions .btn{padding:7px 14px}
 
   /* ===== Telefon / uski ekran ===== */
   @media (max-width:640px){
@@ -375,19 +377,24 @@ function viewArtikli(){
     .filter(a=>(a.naziv+a.sifra).toLowerCase().includes(search))
     .map(a=>{
       const marza = a.prodajna>0 ? ((a.prodajna-a.nabavna)/a.prodajna*100) : 0;
-      return `<tr>
-        <td data-label="Šifra">${a.sifra}</td>
-        <td data-label="Naziv">${a.naziv}</td>
-        <td data-label="JM">${a.jm}</td>
-        <td class="num" data-label="Nabavna">${km(a.nabavna)}</td>
-        <td class="num" data-label="Prodajna">${km(a.prodajna)}</td>
-        <td class="num" data-label="Marža">${fmt(marza)} %</td>
-        <td class="num" data-label="Lager">${a.lager}</td>
-        <td class="rowacts">
-          <button class="btn sm ghost" title="Izmijeni" onclick="openArtikal('${a.sifra}')">✎</button>
-          <button class="btn sm danger" title="Obriši" onclick="deleteArtikal('${a.sifra}')">×</button>
-        </td>
-      </tr>`;
+      return `<div class="lcard">
+        <div class="lc-head" onclick="this.parentNode.classList.toggle('open')">
+          <div class="lc-title"><span class="chev">▸</span><span class="lc-naziv">${a.naziv}</span></div>
+          <div class="lc-right"><span class="lc-kol">${km(a.prodajna)}</span></div>
+        </div>
+        <div class="lc-body">
+          <div class="lc-row"><span class="k">Šifra</span><span class="v">${a.sifra}</span></div>
+          <div class="lc-row"><span class="k">Jedinica mjere</span><span class="v">${a.jm}</span></div>
+          <div class="lc-row"><span class="k">Nabavna cijena</span><span class="v">${km(a.nabavna)}</span></div>
+          <div class="lc-row"><span class="k">Prodajna cijena</span><span class="v">${km(a.prodajna)}</span></div>
+          <div class="lc-row"><span class="k">Marža</span><span class="v">${fmt(marza)} %</span></div>
+          <div class="lc-row"><span class="k">Lager</span><span class="v">${a.lager} ${a.jm}</span></div>
+          <div class="lc-actions">
+            <button class="btn sm" onclick="openArtikal('${a.sifra}')">✎ Izmijeni</button>
+            <button class="btn sm danger" onclick="deleteArtikal('${a.sifra}')">× Obriši</button>
+          </div>
+        </div>
+      </div>`;
     }).join("");
 
   return `
@@ -400,14 +407,11 @@ function viewArtikli(){
           <input class="search" placeholder="Pretraga artikla..." oninput="onSearch(this.value)">
           <button class="btn primary" onclick="openArtikal()">+ Novi artikal</button>
         </div>
-        <table class="cards">
-          <thead><tr>
-            <th>Šifra</th><th>Naziv</th><th>JM</th>
-            <th class="num">Nabavna</th><th class="num">Prodajna</th>
-            <th class="num">Marža</th><th class="num">Lager</th><th></th>
-          </tr></thead>
-          <tbody>${rows || `<tr><td colspan="8" class="empty">Nema rezultata.</td></tr>`}</tbody>
-        </table>
+        <div class="lc-tools">
+          <button class="btn sm ghost" onclick="toggleAllCards(true)">Rasklopi sve</button>
+          <button class="btn sm ghost" onclick="toggleAllCards(false)">Sklopi sve</button>
+        </div>
+        ${rows || `<div class="empty">Nema rezultata.</div>`}
       </div>
     </div>`;
 }
