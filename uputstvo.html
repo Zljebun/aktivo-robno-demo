@@ -50,6 +50,18 @@
   .toolbar a:hover,.toolbar button:hover{background:rgba(255,255,255,.28)}
   .footer{margin-top:30px;border-top:1px solid var(--line);padding-top:10px;color:#8794;font-size:9.5pt;text-align:center}
 
+  @media (max-width:640px){
+    .page{padding:18px 16px 30px}
+    .brand{flex-direction:column;align-items:flex-start;gap:10px}
+    .brand .t{text-align:left}
+    .brand .t h1{font-size:22px;letter-spacing:.3px;line-height:1.1}
+    .brand .t .sub{font-size:12px}
+    .toc ol{columns:1}
+    h2{font-size:16px}
+    h3{font-size:14px}
+    table,th,td{font-size:10.5pt}
+    .toolbar{flex-wrap:wrap}
+  }
   @media print{ .toolbar{display:none} body{background:#fff} .page{padding:0;max-width:none} }
 </style></head>
 <body>
