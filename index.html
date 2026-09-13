@@ -116,13 +116,13 @@
   /* ===== Rasklopive kartice (Lager) ===== */
   .lcard{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;background:#fff;margin-bottom:8px;overflow:hidden}
   .lcard.ok{border-left-color:var(--ok)} .lcard.low{border-left-color:var(--warn)} .lcard.out{border-left-color:var(--late)}
-  .lc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}
+  .lc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}
   .lc-head:hover{background:#f5f9f7}
-  .lc-title{display:flex;align-items:center;gap:10px;min-width:0}
-  .lc-title .chev{color:var(--muted);font-size:12px;transition:transform .15s;flex:none}
+  .lc-title{display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1 1 auto}
+  .lc-title .chev{color:var(--muted);font-size:12px;transition:transform .15s;flex:none;margin-top:4px}
   .lcard.open .lc-title .chev{transform:rotate(90deg)}
-  .lc-naziv{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lc-right{display:flex;align-items:center;gap:12px;white-space:nowrap;flex:none}
+  .lc-naziv{font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+  .lc-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;white-space:nowrap;flex:none;max-width:45%}
   .lc-kol{font-weight:700;font-variant-numeric:tabular-nums}
   .lc-body{display:none;padding:4px 14px 12px;border-top:1px solid var(--line)}
   .lcard.open .lc-body{display:block}
