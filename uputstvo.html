@@ -1,0 +1,196 @@
+<!doctype html><html lang="bs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korisničko uputstvo — Robno knjigovodstvo (Aktivo)</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 16mm 16mm; }
+  *{box-sizing:border-box}
+  :root{--brand:#0f5132;--brand2:#1a7a4c;--gold:#c79a3b;--line:#d7e0da;--muted:#5c6b64;--bg:#f2f6f4}
+  body{font-family:-apple-system,Segoe UI,Calibri,Arial,sans-serif;color:#16241f;font-size:12pt;line-height:1.5;margin:0;background:var(--bg)}
+  .page{max-width:900px;margin:0 auto;background:#fff;padding:34px 40px 48px}
+  p{orphans:2;widows:2}
+  a{color:var(--brand2)}
+
+  .brand{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--brand);padding-bottom:14px}
+  .brand .l{display:flex;align-items:center;gap:14px}
+  .monogram{width:46px;height:46px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:var(--brand)}
+  .brand .nm{font-weight:700;font-size:18px;color:var(--brand);line-height:1}
+  .brand .tg{font-size:11px;color:var(--gold);letter-spacing:.5px;margin-top:3px}
+  .brand .t{text-align:right}
+  .brand .t h1{margin:0;color:var(--brand);font-size:22pt;letter-spacing:.5px}
+  .brand .t .sub{color:#555;font-size:10pt}
+  .accent{height:2px;background:linear-gradient(90deg,var(--gold) 0%,#e3cd93 100%);margin:0 0 14px}
+  .meta{color:#555;font-size:9.5pt;margin:0 0 18px}
+
+  h2{color:var(--brand);font-size:15pt;border-bottom:1px solid var(--line);padding-bottom:4px;margin-top:26px}
+  h2::before{content:"";display:inline-block;width:10px;height:10px;margin-right:8px;background:var(--gold);border-radius:2px}
+  h3{color:var(--brand);font-size:12.5pt;margin-top:18px}
+  ul,ol{margin:8px 0 8px 4px;padding-left:22px}
+  li{margin:4px 0}
+  code{background:#eef3f0;padding:1px 6px;border-radius:5px;font-size:10.5pt}
+  .pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:10pt;font-weight:600}
+  .pill.ok{background:#e7f6ee;color:#1f9d55}.pill.low{background:#fdf0e5;color:#d9822b}.pill.out{background:#fdecec;color:#cc2f2f}
+
+  .toc{background:#f7faf9;border:1px solid var(--line);border-radius:10px;padding:14px 20px;margin:6px 0 8px}
+  .toc h3{margin:0 0 8px}
+  .toc ol{columns:2;column-gap:30px;margin:0}
+  .toc a{text-decoration:none}
+
+  .note,.tip,.warn{border-radius:10px;padding:12px 16px;margin:12px 0;font-size:11pt}
+  .note{background:#eef4ff;border:1px solid #cfe0fb}
+  .tip{background:#eafaf1;border:1px solid #bfe8cf}
+  .warn{background:#fff4e5;border:1px solid #f0d2a8}
+  .note b,.tip b,.warn b{color:var(--brand)}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11pt}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#e9f0ec;color:var(--brand)}
+
+  .toolbar{position:sticky;top:0;background:var(--brand);color:#fff;display:flex;gap:10px;align-items:center;padding:10px 16px;justify-content:space-between}
+  .toolbar a,.toolbar button{color:#fff;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+  .toolbar a:hover,.toolbar button:hover{background:rgba(255,255,255,.28)}
+  .footer{margin-top:30px;border-top:1px solid var(--line);padding-top:10px;color:#8794;font-size:9.5pt;text-align:center}
+
+  @media print{ .toolbar{display:none} body{background:#fff} .page{padding:0;max-width:none} }
+</style></head>
+<body>
+
+<div class="toolbar">
+  <a href="index.html">← Nazad na aplikaciju</a>
+  <button onclick="window.print()">🖨 Štampaj / sačuvaj kao PDF</button>
+</div>
+
+<div class="page">
+  <div class="brand">
+    <div class="l">
+      <div class="monogram">A</div>
+      <div><div class="nm">Aktivo</div><div class="tg">ROBNO KNJIGOVODSTVO</div></div>
+    </div>
+    <div class="t"><h1>KORISNIČKO UPUTSTVO</h1><div class="sub">Robno knjigovodstvo — demo verzija</div></div>
+  </div>
+  <div class="accent"></div>
+  <div class="meta">Verzija 1.0 · septembar 2026. · demo za klijenta BiM Elektro d.o.o.</div>
+
+  <div class="toc">
+    <h3>Sadržaj</h3>
+    <ol>
+      <li><a href="#s1">Šta je ovo i kako pristupam</a></li>
+      <li><a href="#s2">Snalaženje po ekranu</a></li>
+      <li><a href="#s3">Lager / zalihe</a></li>
+      <li><a href="#s4">Artikli (šifarnik)</a></li>
+      <li><a href="#s5">Partneri (dobavljači i kupci)</a></li>
+      <li><a href="#s6">Ulaz robe (prijemnice)</a></li>
+      <li><a href="#s7">Izlaz robe (otpremnice / računi)</a></li>
+      <li><a href="#s8">Štampa i PDF dokumenta</a></li>
+      <li><a href="#s9">Izvještaji</a></li>
+      <li><a href="#s10">Demo verzija — čuvanje podataka</a></li>
+      <li><a href="#s11">Savjeti i česta pitanja</a></li>
+      <li><a href="#s12">Rječnik pojmova</a></li>
+    </ol>
+  </div>
+
+  <h2 id="s1">1. Šta je ovo i kako pristupam</h2>
+  <p>Ovo je aplikacija za <b>robno knjigovodstvo</b> — vođenje zaliha (lagera), unos ulaza i izlaza robe, te osnovni izvještaji o prometu i marži. Namijenjena je da je koristi sam klijent uz podršku knjigovodstvene agencije <b>Aktivo</b>.</p>
+  <p>Aplikaciji se pristupa preko internet linka, direktno iz web pregledača (Chrome, Safari, Firefox) na računaru ili telefonu — nema instalacije.</p>
+  <div class="note"><b>Napomena:</b> Ovo je <b>demo</b> verzija sa izmišljenim podacima, namijenjena prikazu kako aplikacija radi. Vidi poglavlje <a href="#s10">10</a> o čuvanju podataka.</div>
+
+  <h2 id="s2">2. Snalaženje po ekranu</h2>
+  <p>Na vrhu je <b>zaglavlje</b> s nazivom firme i logom Aktivo, a ispod njega <b>traka sa karticama (tabovima)</b> kroz koje se krećete:</p>
+  <ul>
+    <li><b>Lager / zalihe</b> — trenutno stanje robe</li>
+    <li><b>Artikli</b> — šifarnik proizvoda s cijenama</li>
+    <li><b>Ulaz robe</b> — prijemnice od dobavljača</li>
+    <li><b>Izlaz robe</b> — otpremnice/računi kupcima</li>
+    <li><b>Partneri</b> — dobavljači i kupci</li>
+    <li><b>Izvještaji</b> — promet, marža, vrijednost zaliha</li>
+  </ul>
+  <p>Dodirom/klikom na naziv kartice otvarate željeni dio. Na telefonu se traka kartica po potrebi pomjera lijevo-desno.</p>
+  <div class="tip"><b>Rasklopive kartice:</b> spiskovi (Lager, Artikli, Ulaz, Izlaz, Partneri) prikazani su kao <b>rasklopive kartice</b> — sklopljeno vidite naziv i ključni podatak, a klikom na karticu se ona širi i prikazuje sve detalje. Dugmad <code>Rasklopi sve</code> / <code>Sklopi sve</code> otvaraju ili zatvaraju cijeli spisak.</div>
+
+  <h2 id="s3">3. Lager / zalihe</h2>
+  <p>Prikazuje trenutno stanje svakog artikla. Sklopljena kartica pokazuje <b>naziv i količinu</b> (npr. <code>320 m</code>) te status zalihe. Klikom se otvaraju detalji: šifra, jedinica mjere, minimalna zaliha, nabavna cijena, vrijednost i status.</p>
+  <p>Statusi zalihe:</p>
+  <ul>
+    <li><span class="pill ok">uredu</span> — količina je iznad minimuma</li>
+    <li><span class="pill low">ispod min</span> — treba naručiti robu</li>
+    <li><span class="pill out">nema</span> — artikal je rasprodan</li>
+  </ul>
+  <p>Na vrhu su zbirne kartice: broj artikala, ukupna vrijednost zaliha, koliko ih je ispod minimuma i koliko rasprodano. Robu na lager mijenjate zavođenjem <b>ulaza</b> (poveća) i <b>izlaza</b> (smanji).</p>
+
+  <h2 id="s4">4. Artikli (šifarnik)</h2>
+  <p>Popis svih proizvoda s nabavnom i prodajnom cijenom te izračunatom maržom.</p>
+  <h3>Dodavanje artikla</h3>
+  <ol>
+    <li>Kliknite <code>+ Novi artikal</code>.</li>
+    <li>Unesite šifru (predložena je automatski), naziv, jedinicu mjere, nabavnu i prodajnu cijenu, početni lager i minimalnu zalihu.</li>
+    <li>Kliknite <code>Sačuvaj artikal</code>.</li>
+  </ol>
+  <h3>Izmjena i brisanje</h3>
+  <p>Otvorite karticu artikla (klik) i koristite <code>✎ Izmijeni</code> ili <code>× Obriši</code>. Pri brisanju artikla koji se pojavljuje u dokumentima, aplikacija upozorava prije potvrde.</p>
+
+  <h2 id="s5">5. Partneri (dobavljači i kupci)</h2>
+  <p>Registar poslovnih partnera. Svaki partner ima <b>tip</b>: dobavljač, kupac ili oboje, te podatke JIB/PDV i kontakt. Sklopljena kartica pokazuje naziv i tip; klik otvara detalje i dugmad <code>✎ Izmijeni</code> / <code>× Obriši</code> te <b>promet</b> ostvaren s tim partnerom.</p>
+  <ul>
+    <li><b>Dobavljači</b> se biraju pri unosu <b>ulaza</b> robe.</li>
+    <li><b>Kupci</b> se biraju pri unosu <b>izlaza</b> robe.</li>
+  </ul>
+
+  <h2 id="s6">6. Ulaz robe (prijemnice)</h2>
+  <p>Ulaz robe je prijem robe od dobavljača — <b>povećava lager</b>.</p>
+  <ol>
+    <li>U kartici <b>Ulaz robe</b> (ili s Lagera) kliknite <code>+ Novi ulaz</code>.</li>
+    <li>Provjerite broj dokumenta i datum, izaberite <b>dobavljača</b>.</li>
+    <li>Dodajte stavke: za svaku odaberite artikal, unesite <b>količinu</b> i <b>nabavnu cijenu</b>. Dugme <code>+ Dodaj stavku</code> dodaje novi red.</li>
+    <li>Kliknite <code>Zavedi ulaz →</code>. Lager izabranih artikala se odmah povećava.</li>
+  </ol>
+  <div class="note"><b>Savjet:</b> pri odabiru artikla cijena se predlaže automatski (nabavna), ali je možete izmijeniti.</div>
+
+  <h2 id="s7">7. Izlaz robe (otpremnice / računi)</h2>
+  <p>Izlaz robe je izdavanje robe kupcu — <b>smanjuje lager</b>.</p>
+  <ol>
+    <li>U kartici <b>Izlaz robe</b> kliknite <code>− Novi izlaz</code>.</li>
+    <li>Izaberite <b>kupca</b>, dodajte stavke (artikal, količina, prodajna cijena).</li>
+    <li>Kliknite <code>Zavedi izlaz →</code>. Lager se smanjuje.</li>
+  </ol>
+  <div class="warn"><b>Kontrola zaliha:</b> ako pokušate izdati više nego što ima na lageru, aplikacija javlja upozorenje i ne dozvoljava zavođenje dok količinu ne uskladite.</div>
+
+  <h2 id="s8">8. Štampa i PDF dokumenta</h2>
+  <p>Svaki ulazni i izlazni dokument može se odštampati ili sačuvati kao PDF.</p>
+  <ol>
+    <li>Otvorite karticu dokumenta (Ulaz ili Izlaz) i kliknite <code>🖨 Štampaj / PDF</code> (ili <code>Detalji</code> pa <code>Štampaj</code>).</li>
+    <li>Otvara se uredan dokument sa zaglavljem firme, stavkama i obračunom (osnovica, PDV 17%, ukupno).</li>
+    <li>U dijalogu za štampu izaberite štampač ili <b>„Sačuvaj kao PDF"</b>.</li>
+  </ol>
+
+  <h2 id="s9">9. Izvještaji</h2>
+  <p>Kartica <b>Izvještaji</b> prikazuje za tekući period: ukupnu nabavku (ulaz), ukupan promet (izlaz), ostvarenu maržu i vrijednost zaliha, uz pregled najprodavanijih artikala i listu robe ispod minimuma (za naručivanje).</p>
+
+  <h2 id="s10">10. Demo verzija — čuvanje podataka</h2>
+  <div class="warn"><b>Važno:</b> u ovoj demo verziji podaci se čuvaju <b>samo dok je stranica otvorena</b>. Osvježavanje ili zatvaranje stranice vraća početne (izmišljene) podatke. Slobodno isprobavajte unos ulaza/izlaza, dodavanje artikala i partnera — ništa se trajno ne mijenja.</div>
+  <p>U stvarnoj verziji sistema podaci se trajno čuvaju u bazi, uz prijavu korisnika i odvojene podatke po firmi.</p>
+
+  <h2 id="s11">11. Savjeti i česta pitanja</h2>
+  <h3>Ne otvara mi se štampa / PDF?</h3>
+  <p>Dokument se priprema unutar iste stranice i otvara sistemski dijalog za štampu — ne otvara se novi prozor, pa blokada pop-up-a ne smeta. Ako se dijalog ne pojavi, pokušajte ponovo ili osvježite stranicu.</p>
+  <h3>Kako da brzo nađem artikal?</h3>
+  <p>Koristite polje <b>Pretraga</b> na vrhu spiska (Lager, Artikli, Partneri) — filtrira po nazivu i šifri dok kucate.</p>
+  <h3>Radi li na telefonu?</h3>
+  <p>Da. Prikaz je prilagođen telefonu — spiskovi su kartice koje se šire na dodir, a trake i forme se skaliraju.</p>
+
+  <h2 id="s12">12. Rječnik pojmova</h2>
+  <table>
+    <tr><th>Pojam</th><th>Značenje</th></tr>
+    <tr><td>Lager / zalihe</td><td>Trenutna količina robe na stanju.</td></tr>
+    <tr><td>Artikal</td><td>Proizvod u šifarniku (šifra, naziv, jedinica mjere, cijene).</td></tr>
+    <tr><td>Prijemnica (ulaz)</td><td>Dokument o prijemu robe od dobavljača — povećava lager.</td></tr>
+    <tr><td>Otpremnica / račun (izlaz)</td><td>Dokument o izdavanju robe kupcu — smanjuje lager.</td></tr>
+    <tr><td>Nabavna cijena</td><td>Cijena po kojoj je roba nabavljena.</td></tr>
+    <tr><td>Prodajna cijena</td><td>Cijena po kojoj se roba prodaje.</td></tr>
+    <tr><td>Marža</td><td>Razlika između prodajne i nabavne cijene (u %).</td></tr>
+    <tr><td>Minimalna zaliha</td><td>Granica ispod koje treba naručiti robu.</td></tr>
+    <tr><td>PDV</td><td>Porez na dodatu vrijednost (u BiH 17%).</td></tr>
+    <tr><td>Partner</td><td>Dobavljač ili kupac.</td></tr>
+  </table>
+
+  <div class="footer">Aktivo — Robno knjigovodstvo · korisničko uputstvo (demo) · septembar 2026.</div>
+</div>
+</body></html>
