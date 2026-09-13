@@ -131,8 +131,10 @@
   .lc-row .k{color:var(--muted)} .lc-row .v{font-weight:600;font-variant-numeric:tabular-nums}
   .lc-tools{display:flex;gap:10px;margin:2px 0 12px}
   .lc-tools .btn{padding:6px 12px}
-  .lc-actions{display:flex;gap:10px;justify-content:flex-end;padding-top:12px}
+  .lc-actions{display:flex;gap:10px;justify-content:flex-end;padding-top:12px;flex-wrap:wrap}
   .lc-actions .btn{padding:7px 14px}
+  .lc-sub{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin:12px 0 2px;font-weight:700}
+  .lc-total{display:flex;justify-content:space-between;gap:12px;padding:10px 0 2px;margin-top:4px;border-top:2px solid var(--line);font-weight:700;color:var(--brand)}
 
   /* ===== Telefon / uski ekran ===== */
   @media (max-width:640px){
@@ -426,15 +428,29 @@ function viewDocs(kind){
     : "Otpremnice/računi — izlaz robe kupcima. Zavođenje izlaza smanjuje lager.";
   const partnerCol = isUlaz ? "Dobavljač" : "Kupac";
 
-  const rows = arr.slice().reverse().map(d=>`
-    <tr>
-      <td data-label="Broj"><span class="pill doc">${d.broj}</span></td>
-      <td data-label="Datum">${d.datum}</td>
-      <td data-label="${partnerCol}">${d.partner}</td>
-      <td class="num" data-label="Stavki">${d.stavke.length}</td>
-      <td class="num" data-label="Vrijednost"><b>${km(docTotal(d))}</b></td>
-      <td class="rowacts"><button class="btn sm ghost" onclick="showDoc('${kind}','${d.broj}')">Pogledaj</button></td>
-    </tr>`).join("");
+  const rows = arr.slice().reverse().map(d=>{
+    const stavke = d.stavke.map(s=>`
+      <div class="lc-row"><span class="k">${s.kol} × ${artNaziv(s.sifra)}</span><span class="v">${km(s.kol*s.cijena)}</span></div>`).join("");
+    return `<div class="lcard">
+      <div class="lc-head" onclick="this.parentNode.classList.toggle('open')">
+        <div class="lc-title"><span class="chev">▸</span>
+          <span class="lc-naziv"><span class="pill doc">${d.broj}</span> ${d.partner}</span>
+        </div>
+        <div class="lc-right"><span class="lc-kol">${km(docTotal(d))}</span></div>
+      </div>
+      <div class="lc-body">
+        <div class="lc-row"><span class="k">Datum</span><span class="v">${d.datum}</span></div>
+        <div class="lc-row"><span class="k">${partnerCol}</span><span class="v">${d.partner}</span></div>
+        <div class="lc-sub">Stavke (${d.stavke.length})</div>
+        ${stavke}
+        <div class="lc-total"><span>Ukupno</span><span>${km(docTotal(d))}</span></div>
+        <div class="lc-actions">
+          <button class="btn sm" onclick="showDoc('${kind}','${d.broj}')">Detalji</button>
+          <button class="btn sm primary" onclick="printDoc('${kind}','${d.broj}')">🖨 Štampaj / PDF</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
 
   const ukupno = arr.reduce((s,d)=>s+docTotal(d),0);
 
@@ -450,13 +466,11 @@ function viewDocs(kind){
         <button class="btn primary" onclick="${isUlaz?'openUlaz()':'openIzlaz()'}">+ Novi ${isUlaz?'ulaz':'izlaz'}</button>
       </div>
       <div class="pbody">
-        <table class="cards">
-          <thead><tr>
-            <th>Broj</th><th>Datum</th><th>${partnerCol}</th>
-            <th class="num">Stavki</th><th class="num">Vrijednost</th><th></th>
-          </tr></thead>
-          <tbody>${rows || `<tr><td colspan="6" class="empty">Još nema dokumenata.</td></tr>`}</tbody>
-        </table>
+        <div class="lc-tools">
+          <button class="btn sm ghost" onclick="toggleAllCards(true)">Rasklopi sve</button>
+          <button class="btn sm ghost" onclick="toggleAllCards(false)">Sklopi sve</button>
+        </div>
+        ${rows || `<div class="empty">Još nema dokumenata.</div>`}
       </div>
     </div>`;
 }
@@ -599,17 +613,22 @@ function viewPartneri(){
   const rows = partneri
     .filter(p=>(p.naziv+(p.jib||"")).toLowerCase().includes(search))
     .map((p,idx)=>`
-      <tr>
-        <td data-label="Naziv">${p.naziv}</td>
-        <td data-label="Tip"><span class="pill ${TIP_PILL[p.tip]}">${TIP_LABEL[p.tip]}</span></td>
-        <td data-label="JIB/PDV">${p.jib||"—"}</td>
-        <td data-label="Kontakt">${p.kontakt||"—"}</td>
-        <td class="num" data-label="Promet">${km(prometPartnera(p.naziv))}</td>
-        <td class="rowacts">
-          <button class="btn sm ghost" title="Izmijeni" onclick="openPartner(${idx})">✎</button>
-          <button class="btn sm danger" title="Obriši" onclick="deletePartner(${idx})">×</button>
-        </td>
-      </tr>`).join("");
+      <div class="lcard">
+        <div class="lc-head" onclick="this.parentNode.classList.toggle('open')">
+          <div class="lc-title"><span class="chev">▸</span><span class="lc-naziv">${p.naziv}</span></div>
+          <div class="lc-right"><span class="pill ${TIP_PILL[p.tip]}">${TIP_LABEL[p.tip]}</span></div>
+        </div>
+        <div class="lc-body">
+          <div class="lc-row"><span class="k">Tip</span><span class="v">${TIP_LABEL[p.tip]}</span></div>
+          <div class="lc-row"><span class="k">JIB/PDV</span><span class="v">${p.jib||"—"}</span></div>
+          <div class="lc-row"><span class="k">Kontakt</span><span class="v">${p.kontakt||"—"}</span></div>
+          <div class="lc-row"><span class="k">Promet</span><span class="v">${km(prometPartnera(p.naziv))}</span></div>
+          <div class="lc-actions">
+            <button class="btn sm" onclick="openPartner(${idx})">✎ Izmijeni</button>
+            <button class="btn sm danger" onclick="deletePartner(${idx})">× Obriši</button>
+          </div>
+        </div>
+      </div>`).join("");
 
   const nDob=dobavljaci().length, nKup=kupci().length;
   return `
@@ -627,12 +646,11 @@ function viewPartneri(){
           <input class="search" placeholder="Pretraga partnera..." oninput="onSearch(this.value)">
           <button class="btn primary" onclick="openPartner()">+ Novi partner</button>
         </div>
-        <table class="cards">
-          <thead><tr>
-            <th>Naziv</th><th>Tip</th><th>JIB/PDV</th><th>Kontakt</th><th class="num">Promet</th><th></th>
-          </tr></thead>
-          <tbody>${rows || `<tr><td colspan="6" class="empty">Nema rezultata.</td></tr>`}</tbody>
-        </table>
+        <div class="lc-tools">
+          <button class="btn sm ghost" onclick="toggleAllCards(true)">Rasklopi sve</button>
+          <button class="btn sm ghost" onclick="toggleAllCards(false)">Sklopi sve</button>
+        </div>
+        ${rows || `<div class="empty">Nema rezultata.</div>`}
       </div>
     </div>`;
 }
